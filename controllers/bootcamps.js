@@ -27,12 +27,14 @@ exports.getBootcamps = asyncHandeler(async (req, res, next) => {
   );
 
   // Find resource
-  query = Bootcamp.find(JSON.parse(queryStr));
+  query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
+
   // Select Fields
   if (req.query.select) {
     const fields = req.query.select.split(',').join(' ');
     query.select(fields);
   }
+
   // Sort Fields
   if (req.query.sort) {
     const sortBy = req.query.sort.split(',').join(' ');
@@ -40,6 +42,7 @@ exports.getBootcamps = asyncHandeler(async (req, res, next) => {
   } else {
     query = query.sort('-createdAt');
   }
+
   // Pagination
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 100;
@@ -115,12 +118,13 @@ exports.updateBootcamp = asyncHandeler(async (req, res, next) => {
 //@ROUTE       DELETE /api/v1/bootcamps/:id
 //@ACCESS      private
 exports.deleteBootcamp = asyncHandeler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const bootcamp = await Bootcamp.findById(req.params.id);
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
     );
   }
+  bootcamp.deleteOne();
   res.status(200).json({ success: true, data: {} });
 });
 
