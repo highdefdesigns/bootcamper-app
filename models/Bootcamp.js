@@ -100,6 +100,7 @@ const BootcampSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
+  // set viruals
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
@@ -139,9 +140,12 @@ BootcampSchema.pre('deleteOne', { document: true }, async function (next) {
 });
 
 // Reverse populate with virtuals
+//courses here can be called whatever you want
 BootcampSchema.virtual('courses', {
+  // refrence Course model
   ref: 'Course',
   localField: '_id',
+  // reference bootcamp in Course model
   foreignField: 'bootcamp',
   justOne: false,
 });
