@@ -1,4 +1,6 @@
+path = require('path');
 const express = require('express');
+const fileupload = require('express-fileupload');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
@@ -30,6 +32,13 @@ app.use(logger);
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// File uploading .jpgs .png etc.
+app.use(fileupload());
+
+// Set static folder for image
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Mount routers
 app.use('/api/v1/bootcamps/', bootcamps);
 app.use('/api/v1/courses/', courses);
