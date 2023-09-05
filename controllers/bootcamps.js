@@ -8,74 +8,7 @@ const Bootcamp = require('../models/Bootcamp');
 //@ROUTE       GET /api/v1/bootcamps
 //@ACCESS      public
 exports.getBootcamps = asyncHandeler(async (req, res, next) => {
-  let query;
-
-  // Copy of req/query
-  const reqQuery = { ...req.query };
-
-  // fields to exclude
-  const removeFields = ['select', 'sort', 'page', 'limit'];
-  // loop over removeFields to find one to exclude
-  removeFields.forEach((param) => delete reqQuery[param]);
-
-  // Allows us to make query searches
-  let queryStr = JSON.stringify(reqQuery);
-  console.log(queryStr);
-  // create query search operator $gt|$gte...
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`
-  );
-
-  // Find resource (replace 'courses with an object of fields yoou want if you font want the whole courses field ')
-  query = Bootcamp.find(JSON.parse(queryStr)).populate('courses');
-
-  // Select Fields
-  if (req.query.select) {
-    const fields = req.query.select.split(',').join(' ');
-    query.select(fields);
-  }
-
-  // Sort Fields
-  if (req.query.sort) {
-    const sortBy = req.query.sort.split(',').join(' ');
-    query.sort(sortBy);
-  } else {
-    query = query.sort('-createdAt');
-  }
-
-  // Pagination
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 100;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const total = await Bootcamp.countDocuments();
-
-  query = query.skip(startIndex).limit(limit);
-
-  // Execute query
-  const bootcamps = await query;
-
-  const pagination = {};
-
-  if (endIndex < total) {
-    pagination.next = {
-      page: page + 1,
-      limit,
-    };
-  }
-  if (startIndex > 0) {
-    pagination.prev = {
-      page: page - 1,
-      limit,
-    };
-  }
-  res.status(200).json({
-    success: true,
-    count: bootcamps.length,
-    pagination,
-    data: bootcamps,
-  });
+  res.status(200).json(res.advancedResults);
 });
 
 //@DESC        Get specific bootcamp
@@ -191,11 +124,13 @@ exports.bootcampPhotoUpload = asyncHandeler(async (req, res, next) => {
   // create custom filename no one else can use
   file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
 
+  // Move file to static folder
   file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async (err) => {
     if (err) {
       console.error(err);
       return next(new ErrorResponse(`Problem with file upload`, 500));
     }
+    // insert file into database
     await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
 
     res.status(200).json({

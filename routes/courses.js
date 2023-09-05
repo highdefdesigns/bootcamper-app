@@ -7,9 +7,22 @@ const {
   deleteCourse,
 } = require('../controllers/courses');
 
+const Course = require('../models/Course');
+const advancedResults = require('../middleware/advancedResults');
+
 const router = express.Router({ mergeParams: true });
 
-router.route('/').get(getCourses).post(addCourse);
+router
+  .route('/')
+  .get(
+    advancedResults(Course, {
+      // populate takes in the path then the items you want to select to be added
+      path: 'bootcamp',
+      select: 'name description website',
+    }),
+    getCourses
+  )
+  .post(addCourse);
 router.route('/:id').get(getCourse).put(updateCourse).delete(deleteCourse);
 
 module.exports = router;
