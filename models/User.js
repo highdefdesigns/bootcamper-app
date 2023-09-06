@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+// complete js empimentation of bcrypt
+const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -14,9 +17,10 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email',
     ],
   },
+  // target user error someday if enum is not chosen
   role: {
     type: String,
-    enum: ['user', 'pulisher'],
+    enum: ['user', 'publisher'],
     default: 'user',
   },
   password: {
@@ -33,4 +37,19 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-module.exprots = mongoose.model('User', UserSchema);
+// Encrypt password using bcrypt
+UserSchema.pre('save', async function (next) {
+  const salt = await bcrypt.genSalt(10);
+  // 10 is recommended in docs
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+// Sign JWT and return
+// a mongoose method (called on initiallize model ie the User) not middelware where it runs automatically but a method where you have to call it
+UserSchema.methods.getSignedJwtToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE,
+  });
+};
+
+module.exports = mongoose.model('User', UserSchema);
