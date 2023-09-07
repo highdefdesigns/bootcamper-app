@@ -6,14 +6,14 @@ const Bootcamp = require('../models/Bootcamp');
 
 //@DESC        Get all bootcamps
 //@ROUTE       GET /api/v1/bootcamps
-//@ACCESS      public
+//@ACCESS      Public
 exports.getBootcamps = asyncHandeler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
 
 //@DESC        Get specific bootcamp
 //@ROUTE       GET /api/v1/bootcamps/:id
-//@ACCESS      public
+//@ACCESS      Public
 exports.getBootcamp = asyncHandeler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id);
   if (!bootcamp) {
@@ -26,7 +26,7 @@ exports.getBootcamp = asyncHandeler(async (req, res, next) => {
 
 //@DESC        Create new bootcamp
 //@ROUTE       POST /api/v1/bootcamps
-//@ACCESS      private
+//@ACCESS      Private
 exports.createBootcamp = asyncHandeler(async (req, res, next) => {
   const bootcamp = await Bootcamp.create(req.body);
   res.status(201).json({ success: true, data: bootcamp });
@@ -34,7 +34,7 @@ exports.createBootcamp = asyncHandeler(async (req, res, next) => {
 
 //@DESC        Update specific bootcamp
 //@ROUTE       PUT /api/v1/bootcamps/:id
-//@ACCESS      private
+//@ACCESS      Private
 exports.updateBootcamp = asyncHandeler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -50,7 +50,7 @@ exports.updateBootcamp = asyncHandeler(async (req, res, next) => {
 
 //@DESC        Delete specific bootcamp
 //@ROUTE       DELETE /api/v1/bootcamps/:id
-//@ACCESS      private
+//@ACCESS      Private
 exports.deleteBootcamp = asyncHandeler(async (req, res, next) => {
   const bootcamp = await Bootcamp.findById(req.params.id);
 

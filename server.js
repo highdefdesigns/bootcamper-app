@@ -1,11 +1,12 @@
 path = require('path');
 const express = require('express');
-const fileupload = require('express-fileupload');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
-const connectDB = require('./config/db');
 const colors = require('colors');
+const fileupload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
+const connectDB = require('./config/db');
 
 // bring in ENV variables
 dotenv.config({ path: './config/config.env' });
