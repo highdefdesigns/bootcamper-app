@@ -2,7 +2,7 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandeler = require('../middleware/async');
 const User = require('../models/User');
 
-//@DESC        Register use
+//@DESC        Register user
 //@ROUTE       POST /api/v1/auth/register
 //@ACCESS      Public
 exports.register = asyncHandeler(async (req, res, next) => {
@@ -17,11 +17,9 @@ exports.register = asyncHandeler(async (req, res, next) => {
   });
 
   sendTokenResponse(user, 200, res);
-
-  res.status(200).json({ success: true, token });
 });
 
-//@DESC        Register use
+//@DESC        Login user
 //@ROUTE       POST /api/v1/auth/login
 //@ACCESS      Public
 exports.login = asyncHandeler(async (req, res, next) => {
@@ -46,8 +44,6 @@ exports.login = asyncHandeler(async (req, res, next) => {
   }
 
   sendTokenResponse(user, 200, res);
-
-  res.status(200).json({ success: true, token });
 });
 
 // Get token from model, create cookie and send response
@@ -74,3 +70,16 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({ success: true, token });
 };
+
+//@DESC        Get current logged in user
+//@ROUTE       POST /api/v1/auth/me
+//@ACCESS      Private
+exports.getMe = asyncHandeler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  /* 
+  needs an error response to say user not authenticated. Right now it says "success": false, "error": "Not authorized to access this route" --- This error is located in middleware/auth for verifiyng token
+  */
+
+  res.status(200).json({ success: true, data: user });
+});

@@ -27,6 +27,9 @@ const app = express();
 // body parser
 app.use(express.json());
 
+// Cookie parser
+app.use(cookieParser());
+
 // Custom logging middleware
 app.use(logger);
 

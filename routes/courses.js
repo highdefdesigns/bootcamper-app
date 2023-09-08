@@ -14,6 +14,9 @@ const advancedResults = require('../middleware/advancedResults');
 
 const router = express.Router({ mergeParams: true });
 
+// wherever protect is user has to be logged in to use route
+const { protect } = require('../middleware/auth');
+
 router
   .route('/')
   .get(
@@ -24,7 +27,11 @@ router
     }),
     getCourses
   )
-  .post(addCourse);
-router.route('/:id').get(getCourse).put(updateCourse).delete(deleteCourse);
+  .post(protect, addCourse);
+router
+  .route('/:id')
+  .get(getCourse)
+  .put(protect, updateCourse)
+  .delete(protect, deleteCourse);
 
 module.exports = router;
