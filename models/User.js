@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add a name'],
   },
+  // MAKE EMAIL SO ITS NOT CASE SENSITIVE ie YOU CAN REGISTER sarah@gmail.com and Sarah@gmail.com as two accounts and it should not do that.
   email: {
     type: String,
     required: [true, 'Please add an email'],
