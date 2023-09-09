@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema({
     ],
   },
   // target user error someday if enum is not chosen
+  // in order to make a user an admin you must do that through MONGODB Atlas and edit it through there
   role: {
     type: String,
     enum: ['user', 'publisher'],

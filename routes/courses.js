@@ -15,7 +15,8 @@ const advancedResults = require('../middleware/advancedResults');
 const router = express.Router({ mergeParams: true });
 
 // wherever protect is user has to be logged in to use route
-const { protect } = require('../middleware/auth');
+// Make sure authorize comes after any protect. Since we call req.user which gets set inside the protect middleware
+const { protect, authorize } = require('../middleware/auth');
 
 router
   .route('/')
@@ -27,11 +28,11 @@ router
     }),
     getCourses
   )
-  .post(protect, addCourse);
+  .post(protect, authorize('publisher', 'admin'), addCourse);
 router
   .route('/:id')
   .get(getCourse)
-  .put(protect, updateCourse)
-  .delete(protect, deleteCourse);
+  .put(protect, authorize('publisher', 'admin'), updateCourse)
+  .delete(protect, authorize('publisher', 'admin'), deleteCourse);
 
 module.exports = router;
