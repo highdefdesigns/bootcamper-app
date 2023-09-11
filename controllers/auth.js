@@ -46,6 +46,41 @@ exports.login = asyncHandeler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+//@DESC        Get current logged in user
+//@ROUTE       POST /api/v1/auth/me
+//@ACCESS      Private
+exports.getMe = asyncHandeler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  /* 
+  needs an error response to say user not authenticated. Right now it says "success": false, "error": "Not authorized to access this route" --- This error is located in middleware/auth for verifiyng token
+  */
+
+  res.status(200).json({ success: true, data: user });
+});
+
+//@DESC        Forgot Password
+//@ROUTE       POST /api/v1/auth/forgotpassword
+//@ACCESS      Public
+exports.forgotPassword = asyncHandeler(async (req, res, next) => {
+  // Find one pass in an object and match email to req.body.email
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ErrorResponse('There is no user with that email', 404));
+  }
+
+  // Get reset token;
+  const resetToken = user.getResetPasswordToken();
+
+  // console.log(resetToken);
+
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({ success: true, data: user });
+});
+
+// ============= HELPER FUNCTIONS
 // Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
   // Create token
@@ -70,16 +105,3 @@ const sendTokenResponse = (user, statusCode, res) => {
     .cookie('token', token, options)
     .json({ success: true, token });
 };
-
-//@DESC        Get current logged in user
-//@ROUTE       POST /api/v1/auth/me
-//@ACCESS      Private
-exports.getMe = asyncHandeler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-
-  /* 
-  needs an error response to say user not authenticated. Right now it says "success": false, "error": "Not authorized to access this route" --- This error is located in middleware/auth for verifiyng token
-  */
-
-  res.status(200).json({ success: true, data: user });
-});

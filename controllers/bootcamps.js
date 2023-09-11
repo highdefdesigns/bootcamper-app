@@ -173,6 +173,7 @@ exports.bootcampPhotoUpload = asyncHandeler(async (req, res, next) => {
       )
     );
   }
+
   // create custom filename no one else can use
   file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
 
