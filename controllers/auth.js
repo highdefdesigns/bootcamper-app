@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandeler = require('../middleware/async');
 const sendEmail = require('../utils/sendEmail');
@@ -81,7 +82,7 @@ exports.forgotPassword = asyncHandeler(async (req, res, next) => {
   // Create reset url
   const resetUrl = `${req.protocol}://${req.get(
     'host'
-  )}/api/v1/setpassword/${resetToken}`;
+  )}/api/v1/auth/resetpassword/${resetToken}`;
 
   const message = `Your are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to \n\n ${resetUrl}`;
 
@@ -104,6 +105,36 @@ exports.forgotPassword = asyncHandeler(async (req, res, next) => {
   }
   // having the below res.status caused an ERROR of  code: 'ERR_HTTP_HEADERS_SENT'
   // res.status(200).json({ success: true, data: user });
+});
+
+//@DESC        Reset password
+//@ROUTE       PUT /api/v1/auth/resetpassword/:resettoken
+//@ACCESS      Public
+exports.resetPassword = asyncHandeler(async (req, res, next) => {
+  // Get hashed token
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.resettoken)
+    .digest('hex');
+
+  console.log(req.params);
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid token', 400));
+  }
+
+  // Set new password
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  sendTokenResponse(user, 200, res);
 });
 
 // ============= HELPER FUNCTIONS
