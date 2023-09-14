@@ -10,12 +10,12 @@ const {
 } = require('../controllers/courses');
 
 const Course = require('../models/Course');
-const advancedResults = require('../middleware/advancedResults');
 
 const router = express.Router({ mergeParams: true });
 
 // wherever protect is user has to be logged in to use route
 // Make sure authorize comes after any protect. Since we call req.user which gets set inside the protect middleware
+const advancedResults = require('../middleware/advancedResults');
 const { protect, authorize } = require('../middleware/auth');
 
 router

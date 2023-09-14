@@ -12,7 +12,6 @@ const {
 } = require('../controllers/bootcamps');
 
 const Bootcamp = require('../models/Bootcamp');
-const advancedResults = require('../middleware/advancedResults');
 
 // Include other resource routers
 const courseRouter = require('./courses');
@@ -21,6 +20,7 @@ const router = express.Router();
 
 // wherever protect is user has to be logged in to use route
 // Make sure authorize comes after any protect. Since we call req.user which gets set inside the protect middleware
+const advancedResults = require('../middleware/advancedResults');
 const { protect, authorize } = require('../middleware/auth');
 
 // Re-route into other resource routers
