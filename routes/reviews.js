@@ -1,7 +1,7 @@
 // if you bring in a new file make sure to add to server.js
 
 const express = require('express');
-const { getReviews, getReview } = require('../controllers/reviews');
+const { getReviews, getReview, addReview } = require('../controllers/reviews');
 
 const Review = require('../models/Review');
 
@@ -12,14 +12,17 @@ const router = express.Router({ mergeParams: true });
 const advancedResults = require('../middleware/advancedResults');
 const { protect, authorize } = require('../middleware/auth');
 
-router.route('/').get(
-  advancedResults(Review, {
-    // populate takes in the path then the items you want to select to be added
-    path: 'bootcamp',
-    select: 'name description',
-  }),
-  getReviews
-);
+router
+  .route('/')
+  .get(
+    advancedResults(Review, {
+      // populate takes in the path then the items you want to select to be added
+      path: 'bootcamp',
+      select: 'name description',
+    }),
+    getReviews
+  )
+  .post(protect, authorize('user', 'admin'), addReview);
 
 router.route('/:id').get(getReview);
 
