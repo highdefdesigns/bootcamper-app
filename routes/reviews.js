@@ -1,7 +1,7 @@
 // if you bring in a new file make sure to add to server.js
 
 const express = require('express');
-const { getReviews } = require('../controllers/reviews');
+const { getReviews, getReview } = require('../controllers/reviews');
 
 const Review = require('../models/Review');
 
@@ -16,9 +16,11 @@ router.route('/').get(
   advancedResults(Review, {
     // populate takes in the path then the items you want to select to be added
     path: 'bootcamp',
-    select: 'name description website',
+    select: 'name description',
   }),
   getReviews
 );
+
+router.route('/:id').get(getReview);
 
 module.exports = router;
