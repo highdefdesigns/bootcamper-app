@@ -3,14 +3,14 @@ const asyncHandeler = require('../middleware/async');
 const User = require('../models/User');
 
 //@DESC        Get all users
-//@ROUTE       GET /api/v1/auth/users
+//@ROUTE       GET /api/v1/users
 //@ACCESS      Private/Admin
 exports.getUsers = asyncHandeler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
 
 //@DESC        Get single users
-//@ROUTE       GET /api/v1/auth/users/:id
+//@ROUTE       GET /api/v1/users/:id
 //@ACCESS      Private/Admin
 exports.getUser = asyncHandeler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
@@ -18,7 +18,7 @@ exports.getUser = asyncHandeler(async (req, res, next) => {
 });
 
 //@DESC        Create user
-//@ROUTE       POST /api/v1/auth/users
+//@ROUTE       POST /api/v1/users
 //@ACCESS      Private/Admin
 exports.createUser = asyncHandeler(async (req, res, next) => {
   const user = await User.create(req.body);
@@ -26,7 +26,7 @@ exports.createUser = asyncHandeler(async (req, res, next) => {
 });
 
 //@DESC        Update user
-//@ROUTE       PUT /api/v1/auth/users/:id
+//@ROUTE       PUT /api/v1/users/:id
 //@ACCESS      Private/Admin
 exports.updateUser = asyncHandeler(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body, {
@@ -38,7 +38,7 @@ exports.updateUser = asyncHandeler(async (req, res, next) => {
 });
 
 //@DESC        Delete user
-//@ROUTE       DELETE /api/v1/auth/users/:id
+//@ROUTE       DELETE /api/v1/users/:id
 //@ACCESS      Private/Admin
 exports.deleteUser = asyncHandeler(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.params.id);
