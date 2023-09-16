@@ -54,17 +54,17 @@ ReviewSchema.statics.getAverageRating = async function (bootcampId) {
       averageRating: tobj[0].averageRating,
     });
   } catch (err) {
-    console.error(err);
+    console.log(err);
   }
 };
 
-// Call getAverageCost after save
-ReviewSchema.post('save', function () {
-  this.constructor.getAverageRating(this.bootcamp);
+// Call getAverageReview after save
+ReviewSchema.post('save', async function () {
+  await this.constructor.getAverageRating(this.bootcamp);
 });
-// Call getAverageCost before save
-ReviewSchema.pre('remove', function () {
-  this.constructor.getAveragerRating(this.bootcamp);
+// Call getAverageReview before remove
+ReviewSchema.post('remove', async function () {
+  await this.constructor.getAverageRating(this.bootcamp);
 });
 
 module.exports = mongoose.model('Review', ReviewSchema);

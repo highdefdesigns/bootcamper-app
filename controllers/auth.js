@@ -137,8 +137,6 @@ exports.forgotPassword = asyncHandeler(async (req, res, next) => {
 
     return next(new ErrorResponse('Email could not be sent', 500));
   }
-  // having the below res.status caused an ERROR of  code: 'ERR_HTTP_HEADERS_SENT'
-  // res.status(200).json({ success: true, data: user });
 });
 
 //@DESC        Reset password
