@@ -59,9 +59,18 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
     },
   ]);
 
+  let average;
+  if (tobj.length > 0) {
+    average = Math.ceil(tobj[0].averageCost / 10) * 10;
+  } else {
+    // Handle the scenario when there are no courses left for the bootcamp.
+    // You can set the average to 0 or undefined based on your requirements.
+    average = 0;
+  }
+
   try {
     await this.model('Bootcamp').findByIdAndUpdate(bootcampId, {
-      averageCost: Math.ceil(tobj[0].averageCost / 10) * 10,
+      averageCost: average,
     });
   } catch (err) {
     console.log(err);
@@ -69,12 +78,12 @@ CourseSchema.statics.getAverageCost = async function (bootcampId) {
 };
 
 // Call getAverageCost after save
-CourseSchema.post('save', async function () {
-  await this.constructor.getAverageCost(this.bootcamp);
+CourseSchema.post('save', function () {
+  this.constructor.getAverageCost(this.bootcamp);
 });
 // Call getAverageCost after remove
-CourseSchema.post('remove', async function () {
-  await this.constructor.getAverageCost(this.bootcamp);
+CourseSchema.pre('remove', function () {
+  this.constructor.getAverageCost(this.bootcamp);
 });
 
 module.exports = mongoose.model('Course', CourseSchema);

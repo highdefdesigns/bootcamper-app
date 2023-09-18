@@ -101,6 +101,7 @@ exports.deleteReview = asyncHandeler(async (req, res, next) => {
   }
 
   await review.deleteOne();
+  await Review.getAverageRating(review.bootcamp);
 
   res.status(201).json({ success: true, data: {} });
 });

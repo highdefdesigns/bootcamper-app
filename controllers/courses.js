@@ -123,6 +123,9 @@ exports.deleteCourse = asyncHandeler(async (req, res, next) => {
     );
   }
 
-  await course.deleteOne();
+  await course.deleteOne({ _id: course._id });
+
+  await Course.getAverageCost(course.bootcamp);
+
   res.status(200).json({ success: true, data: {} });
 });
